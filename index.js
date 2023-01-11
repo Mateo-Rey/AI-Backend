@@ -16,13 +16,13 @@ app.use(cors());
 const port = 3080;
 
 app.post("/", async (req, res) => {
-  const { message } = req.body;
+  const { message, currentModel } = req.body;
 
   const response = await openai.createCompletion({
-    model: "text-davinci-003",
+    model: `${currentModel}`,
     prompt: `${message}`,
-    max_tokens: 100,
-    temperature: 0.5,
+    max_tokens: `${max_tokens}`,
+    temperature: `${temperature}`,
   });
 
   res.json({
@@ -30,6 +30,11 @@ app.post("/", async (req, res) => {
   });
 });
 
+app.get("/models", async (req, res) => {
+  const response = await openai.listEngines();
+
+  res.json({ models: response.data.data });
+});
 app.listen(port, (req, res) => {
   console.log("listening on port 3080");
 });
