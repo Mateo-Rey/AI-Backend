@@ -16,27 +16,15 @@ app.use(cors());
 const port = 3080;
 
 app.post("/", async (req, res) => {
-  const { message, currentModel, temperature, tokens } = req.body;
-  
-  if (tokens > 1001 || tokens !== Number) {
-     let updatedTokens = 100;
-     return updatedTokens;
-
-  } else if (tokens < 1001) {
-    let updatedTokens = tokens;
-    return updatedTokens;
-  }
+  const { message, currentModel, newTemp, tokens } = req.body;
 
   const response = await openai.createCompletion({
     model: `${currentModel}`,
     prompt: `${message}`,
-    max_tokens: updatedTokens,
-    temperature: (temperature/10),
+    max_tokens: tokens,
+    temperature: newTemp,
   });
-
-  res.json({
-    message: response.data.choices[0].text,
-  });
+  res.status(200).json({message: response.data.choices[0].text})
 });
 
 app.get("/models", async (req, res) => {
