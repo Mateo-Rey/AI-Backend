@@ -17,13 +17,24 @@ app.use(cors({origin: true}));
 const port = 3080;
 app.post("/question-post", async (req, res) => {
   const { message, currentModel, newTemp, tokens } = req.body;
-
-  const response = await openai.createCompletion({
-    model: `${currentModel}`,
-    prompt: `${message}`,
-    max_tokens: Number(tokens),
-    temperature: newTemp,
-  });
+  
+  if (tokens > 1000) {
+    const response = await openai.createCompletion({
+      model: `${currentModel}`,
+      prompt: `${message}`,
+      max_tokens: 750,
+      temperature: newTemp,
+    });
+    return response;
+  } else if (tokens <= 1000) {
+    const response = await openai.createCompletion({
+      model: `${currentModel}`,
+      prompt: `${message}`,
+      max_tokens: Number(tokens),
+      temperature: newTemp,
+    });
+    return response;
+  }
   res.status(200).json({message: response.data.choices[0].text})
 });
 
